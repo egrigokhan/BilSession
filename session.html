@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+	<script src="dropzone.js"></script>
+	<script src="bundle.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/3.6.9/firebase.js"></script>
+<head>
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="session.css">
+	<script src="dropzone.js"></script>
+	<script src="bundle.js"></script>
+</head>
+<body background="background.jpg">
+
+	<a style="margin-top: 10px; margin-left: 10px; font-family: Trojan; font-size: 30px; text-decoration: none; color: black; width: 100%; text-align: center;" href="index.html">BilSession</a>
+	<br>
+	<br>
+	
+<div style="width: auto; display: block;overflow-wrap: all; margin: auto auto;">
+	<div class = "stream-view">
+		<div class = "stream-title-bar-transparent">
+			<p>TEST</p>
+		</div>
+
+		<video id = "video" style="width: 100%; height: auto; z-index: -999; opacity: 1;">
+			
+		</video>
+	</div>
+
+	<div class = "stream-view">
+		<div class = "stream-title-bar-transparent">
+			<p>TEST</p>
+		</div>
+
+		<video src = "#" style="width: 100%; height: auto;"></video>
+	</div>
+
+	<div class = "stream-view">
+		<div class = "stream-title-bar-transparent">
+			<p>TEST</p>
+		</div>
+
+		<video src = "#">
+			
+		</video>
+	</div>
+</div>
+<br>
+<div style="display: inline-block;">
+	<form action="/file-upload" class="dropzone" type="dropzone" style="width: 92.6vw; height: 8vw; display: inline-block; margin: 0 1.2vw; padding: 0px 0px; background: white; opacity: 0.4; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); text-align: center;">
+	<div class="fallback">
+		<input name="file" type="file" multiple/>
+	</div>
+</div>
+<br>
+<br>
+<div style="width: 100%; display: block;">
+	<div class = "stream-view">
+		<div class = "stream-title-bar-transparent">
+			<p>TEST</p>
+		</div>
+
+		<video src = "#">
+			
+		</video>
+	</div>
+
+	<div class = "stream-view">
+		<div class = "stream-title-bar-transparent">
+			<p>TEST</p>
+		</div>
+
+		<video src = "#">
+			
+		</video>
+	</div>
+
+	<div class = "stream-view">
+		<div class = "stream-title-bar-transparent">
+			<p>TEST</p>
+		</div>
+
+		<video src = "#">
+			
+		</video>
+	</div>
+</div>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/3.7.0/firebase.js"></script>
+<script type="text/javascript">
+
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyARfjKII2xxs01AAfBTEXkefDSEw1ctk3A",
+    authDomain: "bilsession.firebaseapp.com",
+    databaseURL: "https://bilsession.firebaseio.com",
+    storageBucket: "bilsession.appspot.com",
+    messagingSenderId: "399176089674"
+  };
+  firebase.initializeApp(config);
+  var storageRef = firebase.storage().ref;
+
+  Dropzone.options.myAwesomeDropzone = {
+  paramName: "file", // The name that will be used to transfer the file
+  maxFilesize: 2, // MB
+
+	init: function() {
+    	this.on("addedfile", function(file) { 
+    		storageRef.put(file).then(function(snapshot) {
+  			console.log('Uploaded a blob or file!');
+		});
+	});
+  }
+}; 
+
+</script>
+<script src="video.js"></script>
+<script src="dropzone.js"></script>
+<script type="text/javascript" src="bundle.js"></script>
+</html>
