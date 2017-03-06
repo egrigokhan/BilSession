@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BilChat</title>
+	<link rel="stylesheet" type="text/css" href="index">
+</head>
+<body background="background.jpg">
+
+<script type="text/javascript">
+	function logIn() {
+	var email = document.getElementById('e-mail');
+	var password = document.getElementById('password');
+
+	firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+  // Handle Errors here.
+  var errorCode = error.code;
+  var errorMessage = error.message;
+
+  	
+  // ...
+});
+	window.location.href="test.html";
+}
+</script>
+
+<h1 style="font-family: Trojan; text-align: center; font-size: 80px;">BilSession</h1>
+	<div style="z-index: -1;">
+	<div style="vertical-align: middle; margin-top: 160px;">
+	<textarea id="e-mail" placeholder="E-MAIL" style="width:350px;height: 55px; margin: 0 auto; display: block; text-align: center; vertical-align: middle; font-size: 45px; border: solid 1px gray; resize: none; border-radius: 5px;"></textarea>
+	<br>
+	<textarea type="password" id="password" placeholder="PASSWORD" style="width:350px;height: 55px; margin: 0 auto; display: block; text-align: center; vertical-align: middle; font-size: 45px; border: solid 1px gray; resize: none; border-radius: 5px;"></textarea>
+	<br>
+	<div style="display: block; text-align: center;">
+	<button onClick="logIn()" name="login-button" placeholder="LOGIN" style="text-align: center; margin: 0 auto; display: inline-block; text-align: center; vertical-align: middle;" class="myButton">LOGIN</button>
+	<span style="display: inline-block; font-family: Helvetica;">or go to</span>
+	<a href="#" style="display: inline-block; font-family: Helvetica;">Sign Up</a>
+</div>
+	</div>
+<br><br>
+
+	<div style="text-align: center;">
+	</div>
+	</div>
+
+<br>
+<div style="margin: 0 25%; position: absolute; width: 50%; visibility: hidden;">
+	<table style="text-align: center; width: 100%;">
+		<th style="font-family: Helvetica; text-decoration: gray;">CURRENT SESSIONS</th>
+			<tr><td>Session 1</td></tr>
+			<tr><td>Session 1</td></tr>
+			<tr><td>Session 1</td></tr>
+		
+	</table>
+</div>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/3.6.9/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyARfjKII2xxs01AAfBTEXkefDSEw1ctk3A",
+    authDomain: "bilsession.firebaseapp.com",
+    databaseURL: "https://bilsession.firebaseio.com",
+    storageBucket: "bilsession.appspot.com",
+    messagingSenderId: "399176089674"
+  };
+  firebase.initializeApp(config);
+
+  var database = firebase.database();
+
+  logIn = function() {
+
+	var email = document.getElementById('e-mail').value;
+	var password = document.getElementById('password').value;
+
+	firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+  
+console.log("email", email);
+console.log("password", password);
+
+  // Handle Errors here.
+  var errorCode = error.code;
+  var errorMessage = error.message;
+console.log(errorMessage);
+console.log("error", errorCode);
+
+  // ...
+});
+	
+};
+
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    console.log("in");
+    window.location.href = 'test2.html';
+  } else {
+console.log("out");  }
+});
+</script>
+
+<script type="text/javascript">
+	
+</script>
+
+</html>

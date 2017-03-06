@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+	<script src="https://www.gstatic.com/firebasejs/3.6.9/firebase.js"></script>
+<head>
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="index">
+</head>
+<body background="background.jpg">
+<style type="text/css">
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+}
+
+td{
+	text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+tr:hover:not(th) {
+	background-color: #cdcdcd;
+	color: white;
+	transition-duration: 0.25s;
+}
+
+th {
+	background-color: transparent;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+
+<script type="text/javascript">
+
+		  // Initialize Firebase
+		  var config = {
+		    apiKey: "AIzaSyARfjKII2xxs01AAfBTEXkefDSEw1ctk3A",
+		    authDomain: "bilsession.firebaseapp.com",
+		    databaseURL: "https://bilsession.firebaseio.com",
+		    storageBucket: "bilsession.appspot.com",
+		    messagingSenderId: "399176089674"
+		  };
+		  firebase.initializeApp(config);
+
+		  console.log("success");
+
+		var rootRef = firebase.database().ref('sessions');
+		rootRef.on('value', function(snapshot) {
+
+			var table = document.getElementById('table');
+
+			for (var x=table.rows.length-1; x>0; x--) {
+ 				table.deleteRow(x);
+			}
+  			snapshot.forEach(function(childSnapshot) {
+	   			var childKey = childSnapshot.key;
+	    		var childData = childSnapshot.val();
+	    		console.log(childKey);
+	    		console.log(childData);
+
+				var rowCount = table.rows.length;
+				var row = table.insertRow( rowCount );
+
+				var cell1 = row.insertCell(0);
+				cell1.innerHTML = childData;
+
+				var cell2 = row.insertCell(1);
+				var joinButton = document.createElement('a');
+				//joinButton.src =
+				joinButton.innerHTML = "JOIN";
+				joinButton.href = "test.html?3";
+				cell2.setAttribute("style", "text-align: center");
+				cell2.appendChild(joinButton);
+  			});
+		});
+	</script>
+
+
+	<h1 style="font-family: Trojan; text-align: center; font-size: 80px;">BilSession</h1>
+		<table border="solid 2px gray;" id="table" style="width: 30%; margin: 7% 35%; max-height: 40%; text-align: center;">
+		<th style="font-family: Helvetica; background: transparent; width: 100%;" colspan="2">CURRENT SESSIONS</th>
+	</table>
+
+
+</body>
+</html>
