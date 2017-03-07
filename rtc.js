@@ -7,7 +7,7 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 			initiator: location.hash === '', 
 			trickle: false, 
 			stream: stream 
-		})
+		});
 
 		//Variables
 		var validVideo = 1;
@@ -55,6 +55,7 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 	    	var user = user;
 	    	var userUID = user.uid;
 	    	console.log(userUID);
+	    	console.log("UP");
 	  	} else {
 	    // No user is signed in.
 	  }

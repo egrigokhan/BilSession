@@ -6252,7 +6252,7 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 			initiator: location.hash === '', 
 			trickle: false, 
 			stream: stream 
-		})
+		});
 
 		//Variables
 		var validVideo = 1;
@@ -6300,14 +6300,15 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 	    	var user = user;
 	    	var userUID = user.uid;
 	    	console.log(userUID);
+	    	console.log("UP");
 	  	} else {
 	    // No user is signed in.
 	  }
 	});
 		
 		//Get base root ref for session databases
-		var userRef = firebase.database().ref('sessions/' + sessionKey);
-		var rootRef = firebase.database().ref('sessions/' + sessionKey + '/' + userUID);
+		var rootRef = firebase.database().ref('sessions/' + sessionKey);
+		var userRef = firebase.database().ref('sessions/' + sessionKey + '/' + userUID);
 		var newPeerRef = userRef.push();
 		console.log("rat");
 
