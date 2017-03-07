@@ -6309,7 +6309,7 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 		//Get base root ref for session databases
 		var rootRef = firebase.database().ref('sessions/' + sessionKey);
 		var userRef = firebase.database().ref('sessions/' + sessionKey + '/' + userUID);
-		var newPeerRef = userRef.push();
+		var newPeerRef = rootRef.push();
 		console.log("rat");
 
 		//On peer signal
