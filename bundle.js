@@ -6280,9 +6280,9 @@ firebase.auth().onAuthStateChanged(function(user) {
 });
 
 navigator.getMedia({ video: true, audio: false }, function( stream ) {
-	var source = document.createElement('source');
-	source.setAttribute('src', vendorUrl.createObjectURL(stream));
-	selfVideo.appendChild(source);
+	//var source = document.createElement('source');
+	//source.setAttribute('src', vendorUrl.createObjectURL(stream));
+	//selfVideo.appendChild(source);
 
 	var Peer = require( 'simple-peer' );
 	var peer = new Peer(
