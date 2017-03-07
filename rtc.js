@@ -1,3 +1,5 @@
+var vendorUrl = window.URL || window.webkitURL;
+
 var config = {
 		    apiKey: "AIzaSyARfjKII2xxs01AAfBTEXkefDSEw1ctk3A",
 		    authDomain: "bilsession.firebaseapp.com",

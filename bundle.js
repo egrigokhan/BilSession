@@ -6243,6 +6243,8 @@ function config (name) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],28:[function(require,module,exports){
+var vendorUrl = window.URL || window.webkitURL;
+
 var config = {
 		    apiKey: "AIzaSyARfjKII2xxs01AAfBTEXkefDSEw1ctk3A",
 		    authDomain: "bilsession.firebaseapp.com",
