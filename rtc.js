@@ -86,7 +86,7 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 		//Reading values from database
 	    rootRef.on('value', function(snapshot) {
 	    snapshot.forEach(function(childSnapshot) {
-	  	var peerOther = childSnapshot.val();
+	  	var peerOther = JSON.parse(childSnapshot.val());
 	  	peer.signal(peerOther);
 	  });
 });
