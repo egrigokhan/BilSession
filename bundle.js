@@ -6279,16 +6279,16 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 		console.log(sessionKey);
 
 		// Initialize Firebase
-        var config = 
-        {
-			apiKey: "AIzaSyARfjKII2xxs01AAfBTEXkefDSEw1ctk3A",
-		    authDomain: "bilsession.firebaseapp.com",
-		    databaseURL: "https://bilsession.firebaseio.com",
-		    storageBucket: "bilsession.appspot.com",
-		    messagingSenderId: "399176089674"
-		};
+        //var config = 
+        //{
+		//	apiKey: "AIzaSyARfjKII2xxs01AAfBTEXkefDSEw1ctk3A",
+		//  authDomain: "bilsession.firebaseapp.com",
+		//    databaseURL: "https://bilsession.firebaseio.com",
+		//    storageBucket: "bilsession.appspot.com",
+		//   messagingSenderId: "399176089674"
+		//};
 		
-		firebase.initializeApp(config);
+		//firebase.initializeApp(config);
 
 		console.log("success");
 
