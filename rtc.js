@@ -73,6 +73,7 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 	  		
 	  		console.log("nice");
 	  		console.log(JSON.stringify(data));
+
 	  		newPeerRef.set(
 	  		{
 				//Save peer to database with current user ID
@@ -88,14 +89,13 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 	  	var peerOther = childSnapshot.val();
 	  	peer.signal(JSON.parse(peerOther));
 	  });
-
+});
 	  peer.on('stream', function(stream) {
 	  	var video = document.getElementById('' + validVideo);
 	  	validVideo++;
 	  	video.src = window.URL.createObjectURL(stream);
 	  	video.play();
-	  })
-})
+	  });
 
 
   }, function(error) {
