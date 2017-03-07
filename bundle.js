@@ -6332,7 +6332,7 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 	    rootRef.on('value', function(snapshot) {
 	    snapshot.forEach(function(childSnapshot) {
 	  	var peerOther = childSnapshot.val();
-	  	peer.signal(JSON.parse(peerOther));
+	  	peer.signal(peerOther);
 	  });
 });
 	  peer.on('stream', function(stream) {
