@@ -6251,12 +6251,13 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 		({ 
 			initiator: location.hash === '', 
 			trickle: false, 
-			stream: stream 
+			stream: stream
 		});
 
 		//Variables
 		var validVideo = 1;
 		var ownID;
+		var userUID;
 
 		//If error, report error
 		peer.on('error', function (err) { console.log('error', err) });
@@ -6298,7 +6299,7 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 		{
 	    	console.log(user.uid);
 	    	var user = user;
-	    	var userUID = user.uid;
+	    	userUID = user.uid;
 	    	console.log(userUID);
 	    	console.log("UP");
 	  	} else {
@@ -6308,7 +6309,7 @@ navigator.webkitGetUserMedia({video: true, audio: true}, function(stream) {
 		
 		//Get base root ref for session databases
 		var rootRef = firebase.database().ref('sessions/' + sessionKey);
-		var userRef = firebase.database().ref('sessions/' + sessionKey + '/' + userUID);
+		//var userRef = firebase.database().ref('sessions/' + sessionKey + '/' + userUID);
 		var newPeerRef = rootRef.push();
 		console.log("rat");
 
