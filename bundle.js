@@ -6243,6 +6243,16 @@ function config (name) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],28:[function(require,module,exports){
+var config = {
+		    apiKey: "AIzaSyARfjKII2xxs01AAfBTEXkefDSEw1ctk3A",
+		    authDomain: "bilsession.firebaseapp.com",
+		    databaseURL: "https://bilsession.firebaseio.com",
+		    storageBucket: "bilsession.appspot.com",
+		    messagingSenderId: "399176089674"
+		  };
+
+firebase.initializeApp(config);
+
 var ownRTC;
 var validVideoIndex = 2;
 
@@ -6306,4 +6316,9 @@ navigator.getMedia({ video: true, audio: false }, function( stream ) {
 }, function( error ) {
 	console.log( 'SELF STREAM ERROR: ', error );
 } );
+
+
+
+
+
 },{"simple-peer":25}]},{},[28]);
