@@ -14,7 +14,7 @@ var ownRTC;
 var validVideoIndex = 2;
 
 var peerVideo;
-var selfVideo = document.getElementById( "1" );
+var selfVideo = document.getElementById( "" + '1' );
 
 var url = window.location.search;
 var sessionKey = url.replace("?", '');
