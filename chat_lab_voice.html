@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>BilChat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase-messaging.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase-storage.js"></script>
+    <script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
+    <script type="text/javascript" src="require.js"></script>
+    <style type="text/css">
+    	
+body{margin-top:20px; color: #ddd !important;}
+
+a {
+	cursor: pointer;
+}
+
+/* Component: Chat */
+.img-circle {
+  width: 80px !important;
+}
+
+.body {
+  font-size: 15px !important;
+}
+
+.chat .chat-wrapper .chat-list-wrapper {
+  border: 1px solid #ddd;
+  height: 510px;
+  overflow-y: auto;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list {
+  padding: 0;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li {
+  display: block;
+  clear: both;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li .avatar {
+  margin-right: 12px;
+  float: left;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li .avatar img {
+  width: 60px;
+  height: auto;
+  border: 4px solid transparent;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li .avatar.available img {
+  border-color: #2ecc71;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li .avatar.busy img {
+  border-color: #ff530d;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li .body .header {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li .body .header .username {
+  font-weight: bold;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li .body .header .timestamp {
+  float: right;
+  color: #999;
+  font-size: 11px;
+  line-height: 18px;
+  font-style: italic;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li .body .header .timestamp i {
+  margin-right: 4px;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li .body p {
+  font-size: 12px;
+  line-height: 16px;
+  max-height: 32px;
+  overflow: hidden;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li:hover {
+  background-color: #f4f4f4;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li.active {
+  background-color: #eee;
+  color: black;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li.active .body .timestamp {
+  color: black;
+}
+.chat .chat-wrapper .chat-list-wrapper .chat-list li.new {
+  border-left: 2px solid #2ecc71;
+}
+.chat .chat-wrapper .message-list-wrapper {
+  border: 1px solid #ddd;
+  height: 452px;
+  position: relative;
+  overflow-y: scroll;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list {
+  padding: 0;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li {
+  display: block;
+  clear: both;
+  position: relative;
+  color: #563d7c !important;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.left .avatar {
+  margin-right: 12px;
+  display: block;
+  float: left;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.left .avatar img {
+  width: 60px;
+  height: auto;
+  border: 2px solid transparent;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.left .avatar.available img {
+  border-color: #2ecc71;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.left .avatar.busy img {
+  border-color: #ff530d;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.left .username {
+  float: left;
+  display: none;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.left .timestamp {
+  text-align: left;
+  display: block;
+  color: #999;
+  font-size: 11px;
+  line-height: 18px;
+  font-style: italic;
+  margin-bottom: 4px;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.left .timestamp i {
+  margin-right: 4px;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.left .body {
+  display: block;
+  width: 87%;
+  float: left;
+  position: relative;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.left .body .message {
+  font-size: 12px;
+  line-height: 16px;
+  display: inline-block;
+  width: auto;
+  background: #2ecc71;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.left .body .message:before {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 9px 9px 9px 0;
+  border-color: transparent #2ecc71 transparent transparent;
+  left: 0;
+  top: 10px;
+  margin-left: -8px;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.left .body .message a.white {
+  color: #563d7c !important;
+  font-weight: bolder;
+  text-decoration: underline;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.left .body .message img {
+  max-width: 320px;
+  max-height: 320px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 5px;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.right .avatar {
+  margin-left: 12px;
+  display: block;
+  float: right;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.right .avatar img {
+  width: 60px;
+  height: auto;
+  border: 2px solid transparent;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.right .avatar.available img {
+  border-color: #2ecc71;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.right .avatar.busy img {
+  border-color: #ff530d;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.right .username {
+  float: right;
+  display: none;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.right .timestamp {
+  text-align: right;
+  display: block;
+  color: #999;
+  font-size: 11px;
+  line-height: 18px;
+  font-style: italic;
+  margin-bottom: 4px;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.right .timestamp i {
+  margin-right: 4px;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.right .body {
+  display: block;
+  width: 87%;
+  float: right;
+  position: relative;
+  text-align: right;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.right .body .message {
+  font-size: 12px;
+  line-height: 16px;
+  display: inline-block;
+  width: auto;
+  background: #3498db;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.right .body .message:after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 9px 9px 9px 0;
+  border-color: transparent #3498db transparent transparent;
+  right: 0;
+  top: 10px;
+  margin-right: -7px;
+  -moz-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.right .body .message a.white {
+  color: white;
+  font-weight: bold;
+}
+.chat .chat-wrapper .message-list-wrapper .message-list li.right .body .message img {
+  max-width: 320px;
+  max-height: 320px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 5px;
+}
+.chat .chat-wrapper .compose-area {
+  padding: 10px 0;
+  text-align: right;
+}
+.chat .chat-wrapper .compose-box {
+  padding: 10px 0;
+}
+.chat .chat-wrapper .recipient-box {
+  padding: 10px 0;
+}
+.chat .chat-wrapper .recipient-box .bootstrap-tagsinput {
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+}
+@media (max-width: 767px) {
+  .chat .chat-wrapper .chat-list-wrapper {
+    border: 1px solid #ddd;
+    height: 300px;
+    overflow-y: auto;
+  }
+  .chat .chat-wrapper .chat-list-wrapper .chat-list {
+    padding: 0;
+  }
+  .chat .chat-wrapper .chat-list-wrapper .chat-list li {
+    display: block;
+    clear: both;
+    border-bottom: 1px solid #ddd;
+    padding: 0px !important;
+  }
+  .chat .chat-wrapper .chat-list-wrapper .chat-list li .avatar {
+    display: none;
+  }
+  .chat .chat-wrapper .chat-list-wrapper .chat-list li .body .header {
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+  .chat .chat-wrapper .chat-list-wrapper .chat-list li .body .header .username {
+    font-weight: bold;
+  }
+  .chat .chat-wrapper .chat-list-wrapper .chat-list li .body .header .timestamp {
+    float: right;
+    color: #999;
+    font-size: 11px;
+    line-height: 18px;
+    font-style: italic;
+  }
+  .chat .chat-wrapper .chat-list-wrapper .chat-list li .body .header .timestamp i {
+    margin-right: 4px;
+  }
+  .chat .chat-wrapper .chat-list-wrapper .chat-list li .body p {
+    display: none;
+  }
+  .chat .chat-wrapper .chat-list-wrapper .chat-list li.active {
+    color: black;
+  }
+  .chat .chat-wrapper .chat-list-wrapper .chat-list li.active .body .timestamp {
+    color: black;
+  }
+  .chat .chat-wrapper .chat-list-wrapper .chat-list li.new {
+    font-weight: bolder;
+  }
+  .chat .chat-wrapper .chat-list-wrapper .chat-list li.new .body .timestamp {
+    font-weight: bolder;
+  }
+  .chat .chat-wrapper .message-list-wrapper .message-list li.left .avatar {
+    display: none;
+  }
+  .chat .chat-wrapper .message-list-wrapper .message-list li.left .username {
+    display: inline-block;
+    margin-right: 10px;
+  }
+  .chat .chat-wrapper .message-list-wrapper .message-list li.left .body {
+    width: 100%;
+  }
+  .chat .chat-wrapper .message-list-wrapper .message-list li.right .avatar {
+    display: none;
+  }
+  .chat .chat-wrapper .message-list-wrapper .message-list li.right .username {
+    display: inline-block;
+    margin-left: 10px;
+  }
+  .chat .chat-wrapper .message-list-wrapper .message-list li.right .timestamp {
+    text-align: right;
+    display: block;
+    color: #999;
+    font-size: 11px;
+    line-height: 18px;
+    font-style: italic;
+    margin-bottom: 4px;
+  }
+  .chat .chat-wrapper .message-list-wrapper .message-list li.right .timestamp i {
+    margin-right: 4px;
+  }
+  .chat .chat-wrapper .message-list-wrapper .message-list li.right .body {
+    width: 100%;
+  }
+  .chat .chat-wrapper .recipient-box {
+    margin-top: 30px;
+  }
+}
+
+.mg-btm-10 {
+    margin-bottom: 10px !important;
+}
+
+.panel-white {
+    border: 1px solid #dddddd;
+}
+.panel {
+    border-radius: 0;
+    margin-bottom: 30px;
+}
+.border-top-green {
+    border-top: 4px solid #27ae60 !important;
+}
+    </style>
+</head>
+
+<script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyBN1UAFdSvdtG7eCM4HKL0WjcEuoWLDO_U",
+      authDomain: "bilchat-54fdc.firebaseapp.com",
+      databaseURL: "https://bilchat-54fdc.firebaseio.com",
+      projectId: "bilchat-54fdc",
+      storageBucket: "bilchat-54fdc.appspot.com",
+      messagingSenderId: "718016557284"
+    };
+    firebase.initializeApp(config);
+
+    $(document).ready(function() { if(getParam('u') == "") {
+      console.log('MEOW')
+      window.location += ( '?u=' + firebase.database().ref('dummy').push().key );
+    } });
+  </script>
+
+<body>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/js/jquery.nicescroll.min.js"></script>
+<div class="container">
+<div class="row">
+  <div class="modal fade" id="exampleModal">
+                                          <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                              <div class="modal-header bg-primary text-light">
+                                                <h4 class="modal-title">Whoa there coach, introduce yourself</h4>
+                                              </div>
+                                              <div class="modal-body">
+                                                <form>
+                                                  <div class="form-group">
+                                                    <input type="text" class="form-control" id="mail" placeholder="E-Mail">
+                                                  </div>
+                                                  <div class="form-group" style="margin-bottom: 0px;">
+                                                    <input type="password" class="form-control" id="password" placeholder="Password">
+                                                  </div>
+                                                </form>
+                                              </div>
+                                              <div class="modal-footer">
+                                                <button type="button" class="btn btn-success" onclick="logIn()">Take me in</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal">Accept defeat</button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+
+        <div class="col-sm-12">
+            <div class="panel panel-white border-top-green">
+                <div class="panel-body chat"> 
+                    <div class="row chat-wrapper">  
+                        
+                        <div class="col-md-12">
+                            
+                            <div>
+
+                                <!--<div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 452px;">-->
+                                <div class="message-list-wrapper" style="overflow-y: scroll !important; width: auto; height: 452px; padding: 10px;">
+                                    <ul class="message-list">
+                                    </ul>
+                                </div><div class="slimScrollBar" style="width: 7px; position: absolute; top: 265px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 187.092px; background: rgb(0, 0, 0);"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(51, 51, 51);"></div>
+                                <!--</div>-->
+
+                                <div class="compose-box">
+                                    <div class="row">
+                                       <div class="col-xs-12 mg-btm-10">
+                                           <form class="form-inline">
+                                              <div class="form-group col-sm-1" style="padding: 0px">
+                                                <input style="width: 100% !important" class="form-control" id="username" placeholder="Name" type="text">
+                                              </div>
+                                              <div class="form-group col-sm-10 px-0" style="padding: 0px 5px">
+                                                <input style="width: 100% !important" class="form-control" id="message-content" placeholder="Your message" type="text">
+                                              </div>
+                                            </form>
+                                              <button class="btn btn-success col-sm-1" onclick="processMessage()">Send</button>
+                                        </div>
+                                    </div> 
+                                </div>
+
+                                <div id="gamespace" style="display: none;">
+                                  <div class="csar">
+                                    <h3>You are the Csar.</h3>
+
+                                    <ul class="list-group" id="csar-deck">
+                                      <li class="list-group-item active">Cras justo odio</li>
+                                      <li class="list-group-item">Dapibus ac facilisis in</li>
+                                      <li class="list-group-item">Morbi leo risus</li>
+                                      <li class="list-group-item">Porta ac consectetur ac</li>
+                                      <li class="list-group-item">Vestibulum at eros</li>
+                                    </ul>
+
+                                    <button class="btn btn-primary" onclick="selectCard()" id="csar-select-button">Select</button>
+                                  </div>
+
+                                  <div class="player">
+                                    <h3>You are a Player.</h3>
+
+                                    <ul class="list-group" id="player-deck">
+                                      <li class="card-item list-group-item active">Cras justo odio</li>
+                                      <li class="list-group-item">Dapibus ac facilisis in</li>
+                                      <li class="list-group-item">Morbi leo risus</li>
+                                      <li class="list-group-item">Porta ac consectetur ac</li>
+                                      <li class="list-group-item">Vestibulum at eros</li>
+                                    </ul>
+
+                                    <button class="btn btn-primary" onclick="playCard()" id="player-select-button">Select</button>
+                                  </div>
+                                </div>
+
+                                
+                                
+                            </div>
+                            
+                        </div>                                    
+                    </div> 
+                    
+                </div> 
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+
+  $('#exampleModal').on('shown.bs.modal', function () {
+      $('#myInput').focus()
+  });
+
+  function logIn() {
+    firebase.auth().signInWithEmailAndPassword(document.getElementById('mail').value + '', document.getElementById('password').value + '').catch(function(error) {
+      // Handle Errors here.
+      console.log(error.code);
+      console.log(error.message);
+      // ...
+    });
+  }
+
+    firebase.database().ref().child('messages').on('value', function(snapshot) {
+    console.log('WUBBA')
+    document.getElementsByClassName('message-list')[0].innerHTML = "";
+        snapshot.forEach(function(child) {
+
+          console.log('STUFF')
+          var r_l = 'left';
+
+          console.log(child)
+
+          console.log('cID: ' + child.child('id').val() )
+
+          console.log(child['message']);
+
+          var LEFT_MESSAGE_BIG = '<li class="msg left" id="' + child.child('id').val() + '"><small class="timestamp">' + child.child('by').val() + ' wrote &#183 </i>' + child.child('date').val() + '</small><div class="body"><ul style="width: auto !important; float: left !important; max-width: 70% !important; min-width: 20% !important; float: left !important;" class="list-group text-dark"><li class="list-group-item py-0 text-dark" style="width: auto !important; padding: auto;">' + child.child('message').val() + '</li></ul></div></li>'
+
+          var RIGHT_MESSAGE_BIG = '<li class="msg right" id="' + child.child('id').val() + '"><small class="timestamp">' + child.child('by').val() + ' wrote &#183 ' + child.child('date').val() + '</small><div class="body"><ul style="width: auto !important; max-width: 70% !important; float: right !important;" class="list-group text-dark"><li class="list-group-item py-0 text-dark" style="width: auto !important; padding: auto;">' + child.child('message').val() + '</li></ul></div></li>'
+
+          var MESSAGE_SMALL = '<li class="list-group-item">' + child.child('message').val() + '</li>'
+
+          console.log('LENGTH: ' + ( $('.msg').length - 1) )
+
+          if( $('.msg').length == 0) {
+            if(getParam('u') == child.child('id').val()) {
+              console.log('NO MESSAGES | MY MESSAGE')
+            document.getElementsByClassName('message-list')[0].innerHTML += RIGHT_MESSAGE_BIG;
+            }
+
+            else {
+              console.log('NO MESSAGES | NOT MY MESSAGE')
+              document.getElementsByClassName('message-list')[0].innerHTML += LEFT_MESSAGE_BIG;
+            }
+          }
+
+          else if(document.getElementsByClassName('msg')[$('.msg').length - 1].id == child.child('id').val()) {
+              console.log('CONTINUATION OF LAST MESSAGE')
+              document.getElementsByClassName('msg')[document.getElementsByClassName('msg').length - 1].getElementsByClassName('list-group')[0].innerHTML += MESSAGE_SMALL;
+          }
+
+          else if(getParam('u') == child.child('id').val()) {
+            console.log('MESSAGES | MY MESSAGE')
+            document.getElementsByClassName('message-list')[0].innerHTML += RIGHT_MESSAGE_BIG;
+          }
+
+          else {
+            console.log('MESSAGES | NOT MY MESSAGE')
+            document.getElementsByClassName('message-list')[0].innerHTML += LEFT_MESSAGE_BIG;
+          }
+
+          var wrapper = document.getElementsByClassName("message-list-wrapper")[0];
+          wrapper.scrollTop = wrapper.scrollHeight;
+        });
+      });
+
+console.log('WUBBA');
+
+function getParam( sname )
+  {
+    var params = location.search.substr(location.search.indexOf("?")+1);
+    var sval = "";
+    params = params.split("&");
+      // split param and value into individual pieces
+      for (var i=0; i<params.length; i++)
+         {
+           temp = params[i].split("=");
+           if ( [temp[0]] == sname ) { sval = temp[1]; }
+         }
+    return sval;
+  }
+  
+function processMessage() {
+
+  console.log('process')
+
+  var ACTION_VERB_KEYWORD_LIST = ['initiate', 'start', 'begin', 'open', 'construct', 'set'];
+  var ENTITY_KEYWORD_LIST = ['cards', 'against', 'humanity'];
+  var SIMON_ACTION_LIST = ['if someone says ']
+  var CHAT_ACTION_LIST = ['chat']
+
+  var message_body = document.getElementById('message-content').value;
+  var message_body_lc = message_body.toLowerCase();
+
+  console.log('PROCESSED MESSAGE, NOW SENDING')
+  console.log('NAME : ' + document.getElementById('username').value )
+  sendMessage(document.getElementById('username').value, getParam('u'), new Date(), message_body );
+
+  var message_words = message_body_lc.split(' ');
+  var message_words_split_with_quotes_lc = message_body_lc.split('"');
+
+  var message_words_split_with_quotes = message_body.split('"');
+
+  if(listIsInList(message_words, ACTION_VERB_KEYWORD_LIST)) {
+    if(listIsInList(message_words, ENTITY_KEYWORD_LIST)) {
+      createNewCAHGame();
+    }
+  }
+
+  if(listIsInList(message_words, CHAT_ACTION_LIST)) {
+    createChat();
+  }
+
+  console.log('QUOTE SPLIT: ' + message_words_split_with_quotes[0])
+  console.log('SIMON: ' + SIMON_ACTION_LIST[0])
+
+  if(message_words_split_with_quotes_lc[0] == SIMON_ACTION_LIST[0]) {
+
+    console.log('SIMON')
+    console.log('IF: ' + message_words_split_with_quotes_lc[1] + ' REPLY: ' + message_words_split_with_quotes[3]);
+
+    var key = firebase.database().ref('replier3000').push().key;
+    firebase.database().ref('replier3000/' + key).set(
+    {
+      if: message_words_split_with_quotes_lc[1],
+      then: message_words_split_with_quotes[3]
+    })
+
+    sendMessage('REPLI-O-MAT 3000', '002', new Date(), 'Will do.');
+  }
+
+  firebase.database().ref('replier3000').once('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      if(childSnapshot.child('if').val() == message_body_lc) {
+        sendMessage('REPLI-O-MAT 3000', '002', new Date(), childSnapshot.child('then').val());
+      }
+    });
+  })
+
+
+    }
+
+function createChat() {
+  var chat_id = firebase.database().ref('chat').push().key;
+  var join_link_inner_html = '<div style="text-align: center;" onclick="joinChat(\'' + chat_id + '\')"><a>Enter Chat</a></div>'
+  sendMessage(document.getElementById('username'), getParam('u'), new Date, join_link_inner_html);
+
+  console.log('CREATE CHAT')
+
+  navigator.getUserMedia  = navigator.getUserMedia ||
+                          navigator.webkitGetUserMedia ||
+                          navigator.mozGetUserMedia ||
+                          navigator.msGetUserMedia;
+
+  var video = document.querySelector('video');
+
+  if (navigator.getUserMedia) {
+    navigator.getUserMedia({audio: true, video: false}, function(stream) {
+    console.log(stream)
+
+    var peer = new Peer(getParam('u'), {key: 'lwjd5qra8257b9'});
+
+    firebase.database().ref('chat/' + chat_id + '/' + getParam('u')).set(getParam('u'));
+
+    firebase.database().ref('chat/' + chat_id).on('value', function (snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+         if(childSnapshot.val() != getParam('u')) {
+             var conn = peer.connect(childSnapshot.val());
+
+             var call = peer.call(childSnapshot.val(),
+            stream);
+
+             peer.on('call', function(call) {
+
+                console.log('received call')
+                // Answer the call, providing our mediaStream
+                call.answer(stream);
+
+                call.on('stream', function(otherStream) {
+
+                console.log('received other stream')
+
+                var audio = document.createElement('video')
+                document.body.appendChild(audio)
+                audio.src = window.URL.createObjectURL(otherStream)
+                audio.play()
+              });
+              });
+
+             
+         }
+       })
+     })
+
+      console.log('STREAMING')
+      }, function() {})
+} else {
+   video.src = 'somevideo.webm';
+  }
+            
+        console.log('STREAMING')
+  
+}
+
+function joinChat(chat_id) {
+
+  console.log('JOINING CHAT')
+
+
+
+  navigator.getUserMedia  = navigator.getUserMedia ||
+                          navigator.webkitGetUserMedia ||
+                          navigator.mozGetUserMedia ||
+                          navigator.msGetUserMedia;
+
+  var video = document.querySelector('video');
+
+  if (navigator.getUserMedia) {
+    navigator.getUserMedia({audio: true, video: false}, function(stream) {
+    console.log(stream)
+
+    var peer = new Peer({key: '2jwb6f8l0a32qpvi'});
+
+  peer.on('call', function(mediaConnection) {
+
+      console.log('RECEIVED PEER CALL')
+
+      mediaConnection.answer();
+
+      mediaConnection.on('stream', function(stream) {
+      console.log('received other stream')
+
+                var audio = document.createElement('video')
+                document.body.appendChild(audio)
+                audio.src = window.URL.createObjectURL(stream)
+                audio.play()
+      });
+    });
+	
+	peer.on('open', function(){
+      firebase.database().ref('chat/' + chat_id + '/' + getParam('u')).set(peer.id);
+	  
+	  firebase.database().ref('chat/' + chat_id).on('value', function (snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+         if(childSnapshot.val() != getParam('u')) {
+
+          //svar peer = new Peer(getParam('u'), {key: '2jwb6f8l0a32qpvi'});
+		  
+		  console.log('PEER: ' + peer)
+
+             var call = peer.call(childSnapshot.val(),
+            stream);
+
+            console.log('CALLING PEER WITH ID ' + childSnapshot.val())        
+         }
+       })
+     })
+	});
+
+    
+
+      console.log('STREAMING')
+      }, function() {})
+} else {
+   video.src = 'somevideo.webm';
+  }
+            
+        console.log('STREAMING')
+}
+
+function createNewCAHGame() {
+  sendMessage('Game Master', '001', new Date(), 'Creating New Cards Against Humanity Game');
+  var game_id = firebase.database().ref('games').push().key;
+  var join_link_inner_html = '<div style="text-align: center;" onclick="joinGame(\'' + game_id + '\')"><a>Join Game</a></div>'
+  sendMessage('Game Master', '001', new Date, join_link_inner_html);
+  console.log('PLAYING GAME');
+
+  startCAHGame();
+
+  //SET CZAR AS INITIATING PLAYER
+  firebase.database().ref('games/' + game_id).child('csar').set(getParam('u'));
+  firebase.database().ref('games/' + game_id + '/players').child(nullLength(snapshot.val())).set(getParam('u'));
+}
+
+function joinGame(gameID) {
+  console.log('JOINING GAME')
+  firebase.database().ref('games/' + gameID +'/players').once('value', function(snapshot) {
+        firebase.database().ref('games/' + gameID + '/players').child(nullLength(snapshot.val())).set(getParam('u'));
+
+        firebase.database().ref('games/' + gameID + '/csar').once('value', function(snapshot) {
+                  if(snapshot.val() == getParam('u')) {
+    configureCsarGameSpace(gameID);
+  }
+
+  else {
+    configurePlayerGameSpace(gameID);
+  }
+        });
+  })
+    }
+
+
+//CAH LOGIC
+function startCAHGame(game_id) {
+//CHECK CSAR CHANGE
+firebase.database().ref('games/' + game_id + '/csar').on('value', function(snapshot) {
+
+  console.log('REVOLUTION')
+
+  firebase.database().ref('cah').once('value', function(snapshot) {
+    var QUESTIONS = snapshot.child('questions').val();
+
+    console.log("RANDOM FROM LIST : " + randomFromList(QUESTIONS))
+
+    sendMessage('Game Master', '001', new Date(), randomFromList(QUESTIONS));
+
+  });
+
+        if(snapshot.val() == getParam('u')) {
+    configureCsarGameSpace(game_id);
+  }
+
+  else {
+    configurePlayerGameSpace(game_id);
+  }
+});
+}
+
+//CONFIGURE CSAR GAME SPACE
+function configureCsarGameSpace(gameID) {
+
+  document.getElementById('csar-deck').innerHTML = "";
+
+  firebase.database().ref('games/' + gameID + '/played_cards').on('value', function(snapshot) {
+    console.log('SOMETHING HAPPENED')
+    
+    snapshot.forEach(function (childsnapshot) {
+        document.getElementById('csar-deck').innerHTML += createDeckItem(searchKeyInList(childsnapshot.val(), snapshot.val()), childsnapshot.val());
+    })
+    
+  });
+
+
+  document.getElementById('csar-select-button').onclick = function() {selectCard(gameID)}
+}
+
+//CONFIGURE PLAYER GAME SPACE
+function configurePlayerGameSpace(gameID) {
+
+  document.getElementById('player-deck').innerHTML = "";
+
+  firebase.database().ref('cah/answers/').once('value', function(snapshot) {
+    for(var i = 0; i < 10; i++) {
+      document.getElementById('player-deck').innerHTML += createDeckItem('CAH', randomFromList(snapshot.val()))
+    }
+  });
+
+  document.getElementById('player-select-button').onclick = function() {playCard(gameID)}
+}
+
+function playCard(gameID) {
+  console.log("PLAYING CARD")
+  var selected_elements = document.getElementById('player-deck').getElementsByClassName('active');
+  var answer = "";
+
+  for(var i = 0; i < selected_elements.length; i++) {
+    answer += ( "/" + selected_elements[i].innerHTML );
+  }
+
+  firebase.database().ref('games/' + gameID + '/played_cards/' + getParam('u')).set(answer);
+  sendMessage("", getParam('u'), new Date(), answer)
+}
+
+function selectCard(gameID) {
+  var selected_element = document.getElementById('csar-deck').getElementsByClassName('active')[0];
+  var answer = selected_element.innerHTML;
+
+  firebase.database().ref('games/' + gameID + '/scores/' + selected_element.id).once('value', function(snapshot) {
+    firebase.database().ref('games/' + gameID + '/scores/' + selected_element.id).set(snapshot.val() + 1);
+  });  
+
+  reelect(gameID);
+}
+
+function reelect(gameID) {
+  firebase.database().ref('games/' + gameID + '/players/').once('value', function(snapshot) {
+    firebase.database().ref('games/' + gameID + '/csar/').set(snapshot.val()[( searchKeyInList(getParam('u'), snapshot.val()) + 1) % nullLength(snapshot.val())]);
+  });
+}
+
+function createDeckItem(id, content) {
+  return ('<li class="list-group-item card-item" onclick="toggleActive(this)" id="' + id + '"">' + content + '</li>' )
+}
+
+function searchKeyInList(o, list) {
+  for(key in list) {
+    if(o == list[key]) {
+      return key;
+    }
+  }
+}
+
+function randomFromList(list) {
+  return list[Object.keys(list)[Math.floor(Math.random() * nullLength(list))]];
+}
+
+function sendMessage(name, id, date, content) {
+
+  console.log('message')
+
+  var h = date.getHours();
+  var m = date.getMinutes();
+
+  if(h < 10) {
+    h = '0' + h;
+  }
+
+  if(m < 10) {
+    m = '0' + m;
+  }
+
+  firebase.database().ref('messages').push(
+    {
+      by: name,
+      id: id,
+      date: h + ":" + m,
+      message: content
+    }
+    )
+}
+
+function listIsInList(l1, l2) {
+  for(var i = 0; i < l1.length; i++) {
+    for(var j = 0; j < l2.length; j++) {
+      if(l1[i] == l2[j]) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function isInList(l1, o) {
+    for(var j = 0; j < l1.length; j++) {
+      if(l1[j] == o) {
+        return true;
+      }
+    }
+  return false;
+}
+
+function nullLength(maybe_null) {
+          if(maybe_null == null) {
+            return 0;
+          }
+
+          else {
+            return Object.keys(maybe_null).length;
+          }
+        }
+
+function toggleActive(e) {
+  console.log('TOGGLE')
+  if(isInList(e.classList, 'active')){
+            e.classList.remove('active')
+        }
+
+        else {
+          e.className += " active"
+        }  
+}
+
+
+</script>
+
+</body>
+</html>
